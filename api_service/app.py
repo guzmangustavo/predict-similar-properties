@@ -45,7 +45,7 @@ def create_app():
                 "headers": g.request_data["headers"],
                 "args": g.request_data["args"],
                 "request_body": g.request_data["request_body"],
-                "api_key": "12345",
+                "api_key": g.request_data["headers"]["X-Api-Key"],
                 "response_time": g.request_data["response_time"],
                 "response_status_code": g.request_data["response_status_code"],
                 "response": g.request_data["response"],

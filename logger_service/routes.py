@@ -49,27 +49,16 @@ def register_log():
 
 
 
-@bp.route('/<log_id>', methods=['GET'])
-def get_log(log_id):
+@bp.route('/', methods=['GET'])
+def get_logs():
     try:
-        if not ObjectId.is_valid(log_id):
-            return jsonify({
-                "status": "error",
-                "message": "Invalid log ID format"
-            }), 400
+        logs_cursor = logs_collection.find({}, {'_id': 0})
+        logs_list = list(logs_cursor)
 
-        log = logs_collection.find_one(
-            {"_id": ObjectId(log_id)},
-            {'_id': 0}
-        )
+        if not logs_list:
+            return jsonify([]), 200
 
-        if not log:
-            return jsonify({
-                "status": "error",
-                "message": "Log not found"
-            }), 404
-
-        return jsonify({"log": log}), 200
+        return jsonify(logs_list), 200
 
     except Exception as e:
         return jsonify({

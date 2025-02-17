@@ -8,8 +8,10 @@ La misma es parte del trabajo final de la materia "Tópicos de Ingeniería de So
 ## Índice
 - [Arquitectura del Proyecto](#arquitectura-del-proyecto)
 - [Diagrama de la Arquitectura](#diagrama-de-la-arquitectura)
-- [Endpoint](#endpoint)
+- [Inicialización del proyecto](#inicialización-del-proyecto)
 - [Carga de API Keys](#carga-de-api-keys)
+- [Endpoint](#endpoint)
+- [Consulta de Logs](#consulta-de-logs)
 
 
 ## Arquitectura del Proyecto
@@ -32,9 +34,24 @@ El proyecto está compuesto por los siguientes servicios:
 
 Cada uno de estos servicios se ejecuta en su propio contenedor y se comunican entre sí según las dependencias definidas en docker-compose.yml.
 
+Los únicos servicios con puertos expuestos fuera de la red del proyecto son: api_service y las bases de datos. Se tomo tal decisión con el objeto de que api_service sea el único servicio que tenga contacto con los clientes de la API. Las bases de datos están expuestas con el objeto de permitir la consulta de datos.
+
+
 ## Diagrama de la Arquitectura
 
 ![](diagrama_arquitectura.jpg)
+
+
+## Inicialización del proyecto
+
+1. Para inicializar el proyecto, se debe construir las imágenes de Docker:
+```bash
+sudo docker compose build
+```
+2. Levantar los contenedores con Docker Compose
+```bash
+sudo docker compose up -d
+```
 
 ## Carga de API Keys
 
@@ -146,4 +163,21 @@ En el caso de que la respuesta sea existosa, el endpoint retornará una salida c
         }
     ]
 }
+```
+
+## Consulta de Logs
+
+La consulta de todos los logs de la base de datos se puede realizar de la siguiente manera:
+
+1. Ejecutar bash dentro del contenedor logger_service
+
+```bash
+sudo docker exec -it logger_service bash
+
+```
+
+2. Realizar la siguiente solicitud
+
+```bash
+curl -X GET "http://localhost:5010/logs/" 
 ```
