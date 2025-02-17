@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  api_service:
+    build: ./api_service
+    container_name: api_service
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - ./api_service:/app
+    depends_on:
+      - logger_service
+      - subscription_manager_service
+  
+  logger_service:
+    build: ./logger_service
+    container_name: logger_service
+    restart: always
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    depends_on:
+      - mongo
+    volumes:
+      - ./logger_service:/app
+
+  subscription_manager_service:
+    build: ./subscription_manager_service
+    container_name: subscription_manager_service
+    restart: always
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./subscription_manager_service:/app
+
+  prediction_service:
+    build: ./prediction_service
+    container_name: prediction_service
+    restart: always
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    volumes:
+      - ./prediction_service:/app
+  mongo:
+    image: mongo:4.4.18
+    container_name: mongo_db
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data 
+
+volumes:
+  mongo_data:
+  redis_data:
